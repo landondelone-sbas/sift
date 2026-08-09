@@ -240,12 +240,23 @@ function screenResult(){
        <p class="why2">${esc(cur.reason)}</p>
      </div>
      ${cur.watch && cur.watch.hyped ? `<div class="myth"><b>REALITY CHECK</b>${esc(cur.watch.note)}</div>` : ""}
+     ${t === 3 ? "" : compLinkHTML(cur.name)}
      <label class="fl" for="nm">NAME ON TAG</label>
      <input class="fieldin" id="nm" value="${esc(cur.name)}" placeholder="e.g. Peanut" autocomplete="off">
      <label class="fl" for="nt">NOTES</label>
      <textarea class="fieldin" id="nt" placeholder="Condition, tag damage, anything odd"></textarea>
      <label class="toggle"><input type="checkbox" id="hold"><span>Keep — sentimental, not for sale</span></label>
      <button class="primary" id="log">Log and next</button>`;
+
+  /* The name is still editable on this screen, so the link would go
+     stale the moment the operator corrects a spelling. Keep it in sync. */
+  const compEl = SORT.querySelector(".comp-link");
+  if(compEl){
+    document.getElementById("nm").addEventListener("input", e=>{
+      compEl.href = buildCompUrl(e.target.value.trim());
+    });
+  }
+
   document.getElementById("log").onclick = ()=>{
     cur.name = document.getElementById("nm").value.trim();
     cur.note = document.getElementById("nt").value.trim();
@@ -319,6 +330,7 @@ function renderReview(){
          <button class="chip ${r.verify==="rejected"?"on":""}" data-v="rejected">Not worth it</button>`}
          <button class="chip del" data-del="1">Delete</button>
        </div>
+       ${r.hold ? "" : compLinkHTML(r.name)}
      </div>`).join("");
 
   el.querySelectorAll(".rec").forEach(card=>{
@@ -332,6 +344,33 @@ function renderReview(){
   });
 }
 function esc(s){ return String(s===null||s===undefined?"":s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+/* ============================================================
+   5b. SOLD-COMP DEEP LINK
+   No API, no key, no network call from this app. We only build a
+   URL string; nothing is requested until the operator taps it and
+   the browser leaves the page. Offline behaviour is unchanged.
+
+   `variant` is accepted but currently always empty — see note below.
+   ============================================================ */
+function buildCompUrl(name, variant){
+  const terms = ["ty beanie", name || ""];
+  if(variant) terms.push(variant);
+  const params = new URLSearchParams({
+    _nkw: terms.join(" ").replace(/\s+/g," ").trim(),
+    LH_Sold: "1",       // sold only
+    LH_Complete: "1",   // completed only
+    _sop: "13"          // ended most recently; blank for Best Match
+  });
+  return "https://www.ebay.com/sch/i.html?" + params.toString();
+}
+
+/* URLSearchParams percent-encodes everything, so the result is safe
+   inside a double-quoted href with no further escaping. */
+function compLinkHTML(name, variant){
+  return `<a class="comp-link" target="_blank" rel="noopener noreferrer" href="${buildCompUrl(name, variant)}">Check sold prices &rarr;</a>
+     <p class="comp-note">Median of 5+ sales. Ignore Best Offer Accepted &mdash; the shown price is not what it sold for.</p>`;
+}
 
 /* ============================================================
    6. GUIDE

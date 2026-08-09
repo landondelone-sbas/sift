@@ -201,3 +201,20 @@ h3.sec:first-child{margin-top:4px}
   opacity:0;transition:opacity .18s;max-width:92vw;text-align:center;
   background:rgba(255,255,255,.93);color:#0A0E30;box-shadow:0 8px 30px rgba(3,6,26,.5)}
 .toast.show{opacity:1}
+
+/* ---------- sold-comp deep link ---------- */
+.comp-link{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;min-height:52px;margin-top:12px;padding:0 16px;
+  background:var(--glass);
+  border:1px solid var(--edge);
+  border-radius:14px;text-decoration:none;color:inherit;
+  font-family:var(--mono);
+  font-size:14px;letter-spacing:.04em;text-transform:uppercase;
+}
+.comp-link:hover{background:var(--glass-hi);border-color:var(--edge-hi)}
+.comp-link:active{background:var(--glass-hi)}
+.comp-note{
+  margin-top:6px;font-size:13px;line-height:1.4;
+  color:var(--dim);
+}

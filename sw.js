@@ -3,7 +3,7 @@
    keep serving the old copy from disk. That is the single most common
    way a deployed change appears not to have shipped. */
 
-const CACHE = "sift-v1";
+const CACHE = "sift-v2";   // bumped: sold-comp link added to app.js + styles.css
 
 const SHELL = [
   "./",
